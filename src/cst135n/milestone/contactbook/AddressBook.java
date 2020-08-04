@@ -1,9 +1,15 @@
 package cst135n.milestone.contactbook;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.List;
 import java.util.Scanner;
 
 public class AddressBook {
@@ -11,6 +17,26 @@ public class AddressBook {
 	Scanner sc = new Scanner(System.in);
 
 	public ArrayList<BaseContact> bc = new ArrayList<>();
+	
+	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
+	static final String USER = "root";
+	static final String PASS = "1mP0$$1bl3";
+
+	static Connection connection;
+
+	AddressBook(){
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			connection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void displayMenu() {
 		menu: do {
@@ -145,56 +171,88 @@ public class AddressBook {
 		
 		// will allow user to add addtional photos
 		boolean addAnother = true;
+		
 		try {
-
+			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+			
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			
 			//			if (sc.nextLine().toUpperCase().equals(b)) {
+			System.out.println("Contact Type : ");
+			String type = "B";
 			System.out.println("Contact Name : ");
 			String name = sc.nextLine();
-			System.out.println("Contact Number : ");
-			int number = Integer.parseInt(sc.nextLine());
 			System.out.println("Contact Phone Type : ");
-			String phone = sc.nextLine();
+			String phone_type = sc.nextLine();
+			System.out.println("Contact Phone Number : ");
+			long phone_num = Long.parseLong(sc.nextLine());
+			System.out.println("Contact Email : ");
+			String email = sc.nextLine();
 			System.out.println("Contact Hours : ");
 			String hours = sc.nextLine();
 			System.out.println("Contact Website : ");
 			String website = sc.nextLine();
-
-			do {
-				System.out.println("+++++++++++++++++++");
-				System.out.println("+++Contact Photo+++");
-				System.out.println("+++++++++++++++++++");
-				System.out.println("Contact Photo ID : " + ++countPhotoID);
-				System.out.println("Format : YYYY-MM-DD ");
-				String date2 = sc.nextLine();
-				LocalDate dop = LocalDate.parse(date2);
-				System.out.println("Contact Photo Description : ");
-				String notes = sc.nextLine();
-				photo.add(new Photo(countPhotoID, dop, notes));
-				System.out.println("Add another photo? (Y/N)");
-				String ans = sc.nextLine().toUpperCase();
-				if (ans.equals("N")) {
-					addAnother = false;
-				} else {
-					addAnother = true;
-				}
-
-			} while (addAnother == true);
-
-			System.out.println("++++++++++++++++++++++");
-			System.out.println("+++Contact Location+++");
-			System.out.println("++++++++++++++++++++++");
+			System.out.println("Contact Description : ");
+			String description = sc.nextLine();
+			System.out.println("Contact Photo Id : ");
+			int photo_id = Integer.parseInt(sc.nextLine());
+			System.out.println("Contact User id : ");
+			int user_id = Integer.parseInt(sc.nextLine());
 			
-			System.out.println("Contact Street : ");
-			String street = sc.nextLine();
-			System.out.println("Contact City : ");
-			String city = sc.nextLine();
-			System.out.println("Contact State : ");
-			String state = sc.nextLine();
+			
+				
+				stmt.setString(1, type);		
+				stmt.setString(2, name);
+				stmt.setString(3, phone_type);
+				stmt.setLong(4, phone_num);
+				stmt.setString(5, email);
+				stmt.setString(6, hours);
+				stmt.setString(7, website);
+				stmt.setString(8, description);
+				stmt.setInt(9, photo_id);
+				stmt.setInt(10, user_id);
+				
+				
+				stmt.execute();
 
-			bc.add(new BusinessContact(number, name, phone, photo,
-					new Location(street, city, state), hours, website));
+		
 
-		} catch (Exception e) {
+//			do {
+//				System.out.println("+++++++++++++++++++");
+//				System.out.println("+++Contact Photo+++");
+//				System.out.println("+++++++++++++++++++");
+//				System.out.println("Contact Photo ID : " + ++countPhotoID);
+//				System.out.println("Format : YYYY-MM-DD ");
+//				String date2 = sc.nextLine();
+//				LocalDate dop = LocalDate.parse(date2);
+//				System.out.println("Contact Photo Description : ");
+//				String notes = sc.nextLine();
+//				photo.add(new Photo(countPhotoID, dop, notes));
+//				System.out.println("Add another photo? (Y/N)");
+//				String ans = sc.nextLine().toUpperCase();
+//				if (ans.equals("N")) {
+//					addAnother = false;
+//				} else {
+//					addAnother = true;
+//				}
+//
+//			} while (addAnother == true);
+//
+//			System.out.println("++++++++++++++++++++++");
+//			System.out.println("+++Contact Location+++");
+//			System.out.println("++++++++++++++++++++++");
+//			
+//			System.out.println("Contact Street : ");
+//			String street = sc.nextLine();
+//			System.out.println("Contact City : ");
+//			String city = sc.nextLine();
+//			System.out.println("Contact State : ");
+//			String state = sc.nextLine();
+//
+//			bc.add(new BusinessContact(number, name, phone, photo,
+//					new Location(street, city, state), hours, website));
+
+		} catch (SQLException e) {
 			System.out.println("Invalid input. Try again.");
 			addBusinessContact();
 		}
@@ -247,13 +305,33 @@ public class AddressBook {
 	}
 
 	public void displayContact() {
+		
 		int counter = 1;
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
 		System.out.println("***********************");
 
-		for(BaseContact contact: bc) {
-			System.out.println(counter++ + "|" + contact);
+//		for(BaseContact contact: bc) {
+//			System.out.println(counter++ + "|" + contact);
+//		}
+		
+		try {
+			
+			String sql = "SELECT last_name, name FROM contact ORDER BY last_name DESC";
+
+			Statement statement = connection.createStatement();
+			ResultSet results = statement.executeQuery(sql);
+			System.out.println("Contact");
+			System.out.println("==========");
+			while (results.next()) {
+				String last = results.getString("last_name");
+				String first = results.getString("name");
+				System.out.println(last + ", " + first);
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
 		}
 
 	}
