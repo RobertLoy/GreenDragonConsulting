@@ -11,11 +11,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.time.LocalDate;
 
 
 public class ConsoleApp implements DataService {
 
+	static final String DB_URL = "jdbc:mysql://127.0.0.1/sakila";
+	static final String USER = "root";
+	static final String PASS = "1mP0$$1bl3";
+
+	static Connection connection;
 
 	static final File file = new File("contact.txt");
 
@@ -28,6 +34,7 @@ public class ConsoleApp implements DataService {
 		c.write();
 
 		ab.displayMenu();
+		
 
 		try {
 			
