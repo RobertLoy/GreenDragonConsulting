@@ -1,30 +1,30 @@
 package cst135n.milestone.contactbook;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 //Child of BaseContact
 public class PersonContact extends BaseContact {
 
-	private LocalDate dob;
+	private Date dob;
 	private String description;
 	private String list;
 	private String relative;
 
 	public PersonContact(long number, String name, String phone, ArrayList<Photo> photo, Location location,
-			LocalDate dob, String description, String list, String relative) {
+			Date dob, String description) {
 		super(number, name, phone, photo, location);
 		this.dob = dob;
 		this.description = description;
-		this.list = list;
-		this.relative = relative;
+		
 	}
 
-	public LocalDate getDob() {
+	public Date getDob() {
 		return dob;
 	}
 
-	public void setDob(LocalDate dob) {
+	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 

@@ -1,11 +1,13 @@
 package cst135n.milestone.contactbook;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,9 +15,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class AddressBook {
-
-	Scanner sc = new Scanner(System.in);
-
+String pattern = "yyyy-MM-dd";
+SimpleDateFormat format = new SimpleDateFormat(pattern);
+	
 	public ArrayList<BaseContact> bc = new ArrayList<>();
 	
 	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
@@ -38,6 +40,27 @@ public class AddressBook {
 		}
 	}
 
+	Scanner sc = new Scanner(System.in);
+	
+	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
+	static final String USER = "root";
+	static final String PASS = "DE7Ad8587d!";
+	
+	static Connection connection;
+	
+	AddressBook(){
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			connection = DriverManager.getConnection(DB_URL, USER, PASS);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void displayMenu() {
 		menu: do {
 			System.out.println("*******************");
@@ -86,10 +109,13 @@ public class AddressBook {
 	}
 
 	private void addPersonContact() {
+		
+		
 		ArrayList<Photo> photo = new ArrayList();
 
 		// will count and numbe photos
 		int countPhotoID = 0;
+		int userId = 4;
 		
 		// will allow user to add addtional photos
 		boolean addAnother = true;
@@ -98,24 +124,30 @@ public class AddressBook {
 		System.out.println("*** ADD PERSONAL CONTACT ***");
 		System.out.println("****************************");
 		try {
+			
+			String sql = "INSERT INTO contact (type, name, last_name, phone_type, phone_num, email, dob, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
+			
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			
 			//			System.out.println("Select: " + p + " Personal or " + b + " Business");
 			//			if (sc.nextLine().toUpperCase().equals(p)) {
-			System.out.println("Contact Name : ");
+			String type = "p";
+			System.out.println("Contact First Name : ");
 			String name = sc.nextLine();
+			System.out.println("Contact Last Name : ");
+			String last_name = sc.nextLine();
 			System.out.println("Contact Number : ");
-			long number = Long.parseLong(sc.nextLine());
+			long phone_num = Long.parseLong(sc.nextLine());
 			System.out.println("Contact Phone Type : ");
-			String phone = sc.nextLine();
+			String phone_type = sc.nextLine();
+			System.out.println("Contact Email : ");
+			String email = sc.nextLine();
 			System.out.println("Contact Birthday : ");
 			System.out.println("Format : YYYY-MM-DD ");
 			String date = sc.nextLine();
-			LocalDate dob = LocalDate.parse(date);
+			Date dob = new Date(format.parse(date).getTime());
 			System.out.println("Contact Description : ");
 			String description = sc.nextLine();
-			System.out.println("Contact List : ");
-			String list = sc.nextLine();
-			System.out.println("Contact Relative : ");
-			String relative = sc.nextLine();
 
 			do {
 				System.out.println("+++++++++++++++++++");
@@ -149,9 +181,24 @@ public class AddressBook {
 			System.out.println("Contact State : ");
 			String state = sc.nextLine();
 
-			bc.add(new PersonContact(number, name, phone, photo,
-					new Location(street, city, state), dob, description, list, relative));
+			bc.add(new PersonContact(phone_num, name, phone_type, photo,
+					new Location(street, city, state), dob, description));
 
+			
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1,type);
+			stmt.setString(2,name);		
+			stmt.setString(3,last_name);
+			stmt.setString(4,phone_type);
+			stmt.setLong(5,phone_num);
+			stmt.setString(6,email);
+			stmt.setDate(7, dob);
+			stmt.setString(8,description);
+			stmt.setInt(9,countPhotoID);
+			stmt.setInt(10,userId);
+			stmt.execute();
+
+			
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
@@ -166,17 +213,15 @@ public class AddressBook {
 
 	private void addBusinessContact() {
 		ArrayList<Photo> photo = new ArrayList();
-		// will count and numbe photos
+		// will count and number photos
 		int countPhotoID = 0;
-		
+		int userId = 4;
 		// will allow user to add addtional photos
 		boolean addAnother = true;
 		
 		try {
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			
 			//			if (sc.nextLine().toUpperCase().equals(b)) {
 			System.out.println("Contact Type : ");
 			String type = "B";
@@ -254,7 +299,7 @@ public class AddressBook {
 
 		} catch (SQLException e) {
 			System.out.println("Invalid input. Try again.");
-			addBusinessContact();
+//			addBusinessContact();
 		}
 	}
 
@@ -304,13 +349,13 @@ public class AddressBook {
 		}
 	}
 
+
 	public void displayContact() {
 		
 		int counter = 1;
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
 		System.out.println("***********************");
-
 //		for(BaseContact contact: bc) {
 //			System.out.println(counter++ + "|" + contact);
 //		}
@@ -318,7 +363,6 @@ public class AddressBook {
 		try {
 			
 			String sql = "SELECT last_name, name FROM contact ORDER BY last_name DESC";
-
 			Statement statement = connection.createStatement();
 			ResultSet results = statement.executeQuery(sql);
 			System.out.println("Contact");
@@ -333,9 +377,7 @@ public class AddressBook {
 
 			e.printStackTrace();
 		}
-
 	}
-
 	public void sortContact() {
 		sort: do {
 			System.out.println("****************");
@@ -408,7 +450,7 @@ public class AddressBook {
 			System.out.println("Contact Birthday : ");
 			System.out.println("Format : YYYY-MM-DD ");
 			String date = sc.nextLine();
-			bc.setDob(LocalDate.parse(date)); 
+			bc.setDob(new Date(format.parse(date).getTime())); 
 			System.out.println("Contact List : ");
 			bc.setList(sc.nextLine());
 			System.out.println("Contact Relative : ");
