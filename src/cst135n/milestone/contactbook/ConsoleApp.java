@@ -78,10 +78,14 @@ public class ConsoleApp implements DataService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if (user_id >= 0) {
+		if (user_id >= 0 && business_role.contentEquals("admin")) {
 			System.out.println("Congratulations you are logged in!");
-			ab.displayMenu();
-		} else {
+			ab.displayAdminMenu();
+		} 
+		if (user_id >= 0 && business_role.contentEquals("user")) {
+			System.out.println("Congratulations you are logged in!");
+			ab.displayUserMenu();
+		}else {
 			System.out.println("Who are you? I don't recognize those credentials.");
 		}
 	}
