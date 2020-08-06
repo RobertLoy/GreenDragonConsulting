@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 	static final String USER = "root";
 	static final String PASS = "1mP0$$1bl3";
 
+
 	static Connection connection;
 
 	AddressBook(){
@@ -40,42 +42,20 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		}
 	}
 
-	Scanner sc = new Scanner(System.in);
-	
-	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
-	static final String USER = "root";
-	static final String PASS = "DE7Ad8587d!";
-	
-	static Connection connection;
-	
-	AddressBook(){
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection(DB_URL, USER, PASS);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void displayMenu() {
-		menu: do {
+	public void displayUserMenu() {
+
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
 			System.out.println("*******************");
-			System.out.println("1] ADD PERSONAL CONTACT");
-			System.out.println("2] ADD BUSINESS CONTACT");
-			System.out.println("3] REMOVE CONTACT");
-			System.out.println("4] SEARCH CONTACT");
-			System.out.println("5] DISPLAY CONTACT");
-			System.out.println("6] SORT CONTACT");
-			System.out.println("7] EDIT CONTACT");
 			System.out.println("0] EXIT");
+			System.out.println("1] ADD CONTACT (PERSONAL)");
+			System.out.println("2] ADD CONTACT (BUSINESS)");
+			System.out.println("3] VIEW ALL CONTACT");
+			System.out.println("4] VIEW A CONTACT'S DETAILS");
+			System.out.println("5] UPDATE A CONTACT");
+			System.out.println("6] DELETE A CONTACT");
 
-			System.out.println("Select your option");
+			System.out.println("Select your option...");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
 				addPersonContact();
@@ -84,19 +64,16 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 				addBusinessContact();
 				break;
 			case 3:
-				removeContact();
+				displayContact();
 				break;
 			case 4:
 				searchContact();
 				break;
 			case 5:
-				displayContact();
+				editContact();
 				break;
 			case 6:
-				sortContact();
-				break;
-			case 7:
-				editContact();
+				removeContact();
 				break;
 			default:
 				System.out.println("EXITING MENU");
@@ -107,7 +84,49 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		} while (true);
 
 	}
+	
+	public void displayAdminMenu() {
+		menu: do {
+			System.out.println("*******************");
+			System.out.println("** CONTACT MENU ***");
+			System.out.println("*******************");
+			System.out.println("0] EXIT");
+			System.out.println("1] ADD A USER");
+			System.out.println("2] VIEW ALL USERS");
+			System.out.println("3] VIEW USER'S DETAILS");
+			System.out.println("4] VIEW BUSINESS CONTACTS FOR ALL USERS");
+			System.out.println("5] UPDATE USER'S PASSWORD");
+			System.out.println("6] DELETE A SHOW");
 
+			System.out.println("Select your option...");
+			switch (Integer.parseInt(sc.nextLine())) {
+			case 1:
+				
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				
+				break;
+			case 5:
+				
+				break;
+			case 6:
+				
+				break;
+			default:
+				System.out.println("EXITING MENU");
+				break menu;
+
+			}
+
+		} while (true);
+
+	}
 	private void addPersonContact() {
 		
 		
@@ -115,8 +134,9 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 		// will count and numbe photos
 		int countPhotoID = 0;
+
 		int userId = 4;
-		
+
 		// will allow user to add addtional photos
 		boolean addAnother = true;
 
@@ -173,7 +193,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
 			System.out.println("++++++++++++++++++++++");
-			
+
 			System.out.println("Contact Street : ");
 			String street = sc.nextLine();
 			System.out.println("Contact City : ");
@@ -208,18 +228,20 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	public void setBc(PersonContact p) {
 		bc.add(p);
-		
+
 	}
 
 	private void addBusinessContact() {
 		ArrayList<Photo> photo = new ArrayList();
 		// will count and number photos
 		int countPhotoID = 0;
+
 		int userId = 4;
 		// will allow user to add addtional photos
 		boolean addAnother = true;
 		
 		try {
+
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			//			if (sc.nextLine().toUpperCase().equals(b)) {
@@ -237,30 +259,41 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			String hours = sc.nextLine();
 			System.out.println("Contact Website : ");
 			String website = sc.nextLine();
-			System.out.println("Contact Description : ");
-			String description = sc.nextLine();
-			System.out.println("Contact Photo Id : ");
-			int photo_id = Integer.parseInt(sc.nextLine());
-			System.out.println("Contact User id : ");
-			int user_id = Integer.parseInt(sc.nextLine());
-			
-			
-				
-				stmt.setString(1, type);		
-				stmt.setString(2, name);
-				stmt.setString(3, phone_type);
-				stmt.setLong(4, phone_num);
-				stmt.setString(5, email);
-				stmt.setString(6, hours);
-				stmt.setString(7, website);
-				stmt.setString(8, description);
-				stmt.setInt(9, photo_id);
-				stmt.setInt(10, user_id);
-				
-				
-				stmt.execute();
 
-		
+			do {
+				System.out.println("+++++++++++++++++++");
+				System.out.println("+++Contact Photo+++");
+				System.out.println("+++++++++++++++++++");
+				System.out.println("Contact Photo ID : " + ++countPhotoID);
+				System.out.println("Format : YYYY-MM-DD ");
+				String date2 = sc.nextLine();
+				LocalDate dop = LocalDate.parse(date2);
+				System.out.println("Contact Photo Description : ");
+				String notes = sc.nextLine();
+				photo.add(new Photo(countPhotoID, dop, notes));
+				System.out.println("Add another photo? (Y/N)");
+				String ans = sc.nextLine().toUpperCase();
+				if (ans.equals("N")) {
+					addAnother = false;
+				} else {
+					addAnother = true;
+				}
+
+			} while (addAnother == true);
+
+			System.out.println("++++++++++++++++++++++");
+			System.out.println("+++Contact Location+++");
+			System.out.println("++++++++++++++++++++++");
+
+			System.out.println("Contact Street : ");
+			String street = sc.nextLine();
+			System.out.println("Contact City : ");
+			String city = sc.nextLine();
+			System.out.println("Contact State : ");
+			String state = sc.nextLine();
+
+			bc.add(new BusinessContact(number, name, phone, photo, new Location(street, city, state), hours, website));
+
 
 //			do {
 //				System.out.println("+++++++++++++++++++");
@@ -306,29 +339,26 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 	public void removeContact() {
 		boolean removeAnother = true;
 		try {
-		do {
-			displayContact();
-			System.out.println("**********************");
-			System.out.println("*** REMOVE CONTACT ***");
-			System.out.println("**********************");
-			System.out.println("Which contact to remove : ");
+			do {
+				displayContact();
+				System.out.println("**********************");
+				System.out.println("*** REMOVE CONTACT ***");
+				System.out.println("**********************");
+				System.out.println("Which contact to remove : ");
 
-			int contactid = Integer.parseInt(sc.nextLine()) - 1;
-			System.out.println(bc.get(contactid) + "\n");
-			bc.remove(contactid);
-			
-			
-			
-			
-			System.out.println("Remove another contact? (Y/N)");
-			String ans = sc.nextLine().toUpperCase();
-			if (ans.equals("N")) {
-				removeAnother = false;
-			} else {
-				removeAnother = true;
-			}
+				int contactid = Integer.parseInt(sc.nextLine()) - 1;
+				System.out.println(bc.get(contactid) + "\n");
+				bc.remove(contactid);
 
-		} while (removeAnother == true);
+				System.out.println("Remove another contact? (Y/N)");
+				String ans = sc.nextLine().toUpperCase();
+				if (ans.equals("N")) {
+					removeAnother = false;
+				} else {
+					removeAnother = true;
+				}
+
+			} while (removeAnother == true);
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			removeContact();
@@ -373,6 +403,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 				System.out.println(last + ", " + first);
 			}
 
+
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -392,8 +423,8 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Select your option");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
-				
-				Collections.sort(bc, (b1, b2)-> b1.getName().compareTo(b2.getName()));
+
+				Collections.sort(bc, (b1, b2) -> b1.getName().compareTo(b2.getName()));
 				for (BaseContact contact : bc) {
 					System.out.println(contact);
 				}
@@ -406,7 +437,8 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			case 3:
 				System.out.println("Sort by Location group");
 				System.out.println(bc);
-				//				Collections.sort(bc, (b1, b2) -> b1.getLocation().compareTo(b2.getLocation()));
+				// Collections.sort(bc, (b1, b2) ->
+				// b1.getLocation().compareTo(b2.getLocation()));
 				break;
 			case 4:
 				System.out.println("Sort by ????? group");
@@ -450,13 +482,13 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Contact Birthday : ");
 			System.out.println("Format : YYYY-MM-DD ");
 			String date = sc.nextLine();
+
 			bc.setDob(new Date(format.parse(date).getTime())); 
+
 			System.out.println("Contact List : ");
 			bc.setList(sc.nextLine());
 			System.out.println("Contact Relative : ");
 			bc.setRelative(sc.nextLine());
-
-
 
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
@@ -478,7 +510,6 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	private void editBusinessContact(BusinessContact bc) {
 		System.out.println("Editting Business Contact: ");
-		
 
 		try {
 
@@ -492,7 +523,6 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			bc.setHours(sc.nextLine());
 			System.out.println("Contact Website : ");
 			bc.setWebsite(sc.nextLine());
-			
 
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
@@ -510,7 +540,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
 		}
-	
+
 	}
 
 }
