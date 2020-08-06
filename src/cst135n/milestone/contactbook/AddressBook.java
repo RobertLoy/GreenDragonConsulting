@@ -38,52 +38,6 @@ public class AddressBook {
 		}
 	}
 
-	public void login() {
-		System.out.println("=================");
-		System.out.println("      LOGIN      ");
-		System.out.println("=================");
-
-		System.out.println("ENTER USERNAME:");
-		String username = sc.nextLine();
-		System.out.println("ENTER PASSWORD:");
-		String password = sc.nextLine();
-		int user_id = -1;
-		String business_role = null;
-
-		try {
-			// Write the SQL with ? as placeholders for user or code variables
-			String sql = "SELECT user_id, user_name, password, business_role FROM user WHERE user_name = ? AND password = ?";
-
-			// Create a PreparedStatement object so it look for the ? placeholders
-			PreparedStatement stmt = connection.prepareStatement(sql);
-
-			// Replace the ? with the correct number and type of variable (e.g. String)
-			stmt.setString(1, username);
-			stmt.setString(2, password);
-
-			// Execute the query based on the PreparedStatement object, do not pass the sql
-			// variable
-			ResultSet results = stmt.executeQuery();
-
-			// Loop through the results of the query
-				while(results.next()) {
-					System.out.println(user_id =  results.getInt("user_id"));
-					System.out.println("USER = " + results.getString("user_name"));
-					System.out.println("PASSWORD = " + results.getString("password"));
-					System.out.println(business_role =  results.getString("business_role"));	
-				}
-			// Credentials are valid so return TRUE
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if (user_id >= 0) {
-			System.out.println("Congratulations you are logged in!");
-			displayMenu();
-		} else {
-			System.out.println("Who are you? I don't recognize those credentials.");
-		}
-	}
-
 	Scanner sc = new Scanner(System.in);
 
 	public ArrayList<BaseContact> bc = new ArrayList<>();
