@@ -42,21 +42,20 @@ public class AddressBook {
 
 	public ArrayList<BaseContact> bc = new ArrayList<>();
 
-	public void displayMenu() {
+	public void displayUserMenu() {
 		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
 			System.out.println("*******************");
-			System.out.println("1] ADD PERSONAL CONTACT");
-			System.out.println("2] ADD BUSINESS CONTACT");
-			System.out.println("3] REMOVE CONTACT");
-			System.out.println("4] SEARCH CONTACT");
-			System.out.println("5] DISPLAY CONTACT");
-			System.out.println("6] SORT CONTACT");
-			System.out.println("7] EDIT CONTACT");
 			System.out.println("0] EXIT");
+			System.out.println("1] ADD CONTACT (PERSONAL)");
+			System.out.println("2] ADD CONTACT (BUSINESS)");
+			System.out.println("3] VIEW ALL CONTACT");
+			System.out.println("4] VIEW A CONTACT'S DETAILS");
+			System.out.println("5] UPDATE A CONTACT");
+			System.out.println("6] DELETE A CONTACT");
 
-			System.out.println("Select your option");
+			System.out.println("Select your option...");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
 				addPersonContact();
@@ -65,19 +64,16 @@ public class AddressBook {
 				addBusinessContact();
 				break;
 			case 3:
-				removeContact();
+				displayContact();
 				break;
 			case 4:
 				searchContact();
 				break;
 			case 5:
-				displayContact();
+				editContact();
 				break;
 			case 6:
-				sortContact();
-				break;
-			case 7:
-				editContact();
+				removeContact();
 				break;
 			default:
 				System.out.println("EXITING MENU");
@@ -88,7 +84,49 @@ public class AddressBook {
 		} while (true);
 
 	}
+	
+	public void displayAdminMenu() {
+		menu: do {
+			System.out.println("*******************");
+			System.out.println("** CONTACT MENU ***");
+			System.out.println("*******************");
+			System.out.println("0] EXIT");
+			System.out.println("1] ADD A USER");
+			System.out.println("2] VIEW ALL USERS");
+			System.out.println("3] VIEW USER'S DETAILS");
+			System.out.println("4] VIEW BUSINESS CONTACTS FOR ALL USERS");
+			System.out.println("5] UPDATE USER'S PASSWORD");
+			System.out.println("6] DELETE A SHOW");
 
+			System.out.println("Select your option...");
+			switch (Integer.parseInt(sc.nextLine())) {
+			case 1:
+				
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				
+				break;
+			case 5:
+				
+				break;
+			case 6:
+				
+				break;
+			default:
+				System.out.println("EXITING MENU");
+				break menu;
+
+			}
+
+		} while (true);
+
+	}
 	private void addPersonContact() {
 		ArrayList<Photo> photo = new ArrayList();
 
