@@ -1,27 +1,23 @@
 package cst135n.milestone.contactbook;
 
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import java.time.LocalDate;
 import java.util.Scanner;
 
 
 public class ConsoleApp  {
 
-	static final File file = new File("contact.txt");
-
 	static AddressBook ab = new AddressBook();
+	static final String DB_URL 	= "jdbc:mysql://127.0.0.1/greendragon";
+	static final String USER 	= "root";
+	static final String PASS 	= "Marco_62";
+	static Connection connection;
+
+	static Scanner sc = new Scanner(System.in);
+
 
 	public static void login() {
 		try {
@@ -85,24 +81,8 @@ public class ConsoleApp  {
 	}
 
 	public static void main(String[] args) {
+
 		login();
-		
-		ConsoleApp c = new ConsoleApp();
-		c.read();
-		c.write();
-		try {
-			
-			storePersonContact();
-			storeBusinessContact();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-	}
-
-		ConsoleApp c = new ConsoleApp();
-		ab.displayMenu();
-
 
 	}
 

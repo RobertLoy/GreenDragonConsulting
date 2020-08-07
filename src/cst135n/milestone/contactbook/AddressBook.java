@@ -16,14 +16,18 @@ import java.util.List;
 import java.util.Scanner;
 
 public class AddressBook {
-String pattern = "yyyy-MM-dd";
-SimpleDateFormat format = new SimpleDateFormat(pattern);
-	
+
+	// ROB - Adding Scanner 
+	private Scanner sc = new Scanner(System.in);
+
+	String pattern = "yyyy-MM-dd";
+	SimpleDateFormat format = new SimpleDateFormat(pattern);
+
 	public ArrayList<BaseContact> bc = new ArrayList<>();
-	
-	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
-	static final String USER = "root";
-	static final String PASS = "1mP0$$1bl3";
+
+	static final String DB_URL 	= "jdbc:mysql://127.0.0.1/greendragon";
+	static final String USER 	= "DB_access";
+	static final String PASS 	= "db_p@$$word";
 
 
 	static Connection connection;
@@ -43,7 +47,10 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 	}
 
 	public void displayUserMenu() {
-
+		
+		// ROB - Added the DO Loop
+		
+		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
 			System.out.println("*******************");
@@ -84,8 +91,9 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		} while (true);
 
 	}
-	
+
 	public void displayAdminMenu() {
+
 		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
@@ -101,22 +109,22 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Select your option...");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
-				
+
 				break;
 			case 2:
-				
+
 				break;
 			case 3:
-				
+
 				break;
 			case 4:
-				
+
 				break;
 			case 5:
-				
+
 				break;
 			case 6:
-				
+
 				break;
 			default:
 				System.out.println("EXITING MENU");
@@ -128,8 +136,8 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	}
 	private void addPersonContact() {
-		
-		
+
+
 		ArrayList<Photo> photo = new ArrayList();
 
 		// will count and numbe photos
@@ -144,11 +152,11 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		System.out.println("*** ADD PERSONAL CONTACT ***");
 		System.out.println("****************************");
 		try {
-			
+
 			String sql = "INSERT INTO contact (type, name, last_name, phone_type, phone_num, email, dob, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			
+
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			
+
 			//			System.out.println("Select: " + p + " Personal or " + b + " Business");
 			//			if (sc.nextLine().toUpperCase().equals(p)) {
 			String type = "p";
@@ -204,7 +212,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			bc.add(new PersonContact(phone_num, name, phone_type, photo,
 					new Location(street, city, state), dob, description));
 
-			
+
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1,type);
 			stmt.setString(2,name);		
@@ -218,7 +226,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			stmt.setInt(10,userId);
 			stmt.execute();
 
-			
+
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
@@ -239,7 +247,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		int userId = 4;
 		// will allow user to add addtional photos
 		boolean addAnother = true;
-		
+
 		try {
 
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
@@ -292,47 +300,13 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Contact State : ");
 			String state = sc.nextLine();
 
-			bc.add(new BusinessContact(number, name, phone, photo, new Location(street, city, state), hours, website));
+			// ROB - Updated names to match inputs
+			bc.add(new BusinessContact(phone_num, name, phone_type, photo, new Location(street, city, state), hours, website));
 
-
-//			do {
-//				System.out.println("+++++++++++++++++++");
-//				System.out.println("+++Contact Photo+++");
-//				System.out.println("+++++++++++++++++++");
-//				System.out.println("Contact Photo ID : " + ++countPhotoID);
-//				System.out.println("Format : YYYY-MM-DD ");
-//				String date2 = sc.nextLine();
-//				LocalDate dop = LocalDate.parse(date2);
-//				System.out.println("Contact Photo Description : ");
-//				String notes = sc.nextLine();
-//				photo.add(new Photo(countPhotoID, dop, notes));
-//				System.out.println("Add another photo? (Y/N)");
-//				String ans = sc.nextLine().toUpperCase();
-//				if (ans.equals("N")) {
-//					addAnother = false;
-//				} else {
-//					addAnother = true;
-//				}
-//
-//			} while (addAnother == true);
-//
-//			System.out.println("++++++++++++++++++++++");
-//			System.out.println("+++Contact Location+++");
-//			System.out.println("++++++++++++++++++++++");
-//			
-//			System.out.println("Contact Street : ");
-//			String street = sc.nextLine();
-//			System.out.println("Contact City : ");
-//			String city = sc.nextLine();
-//			System.out.println("Contact State : ");
-//			String state = sc.nextLine();
-//
-//			bc.add(new BusinessContact(number, name, phone, photo,
-//					new Location(street, city, state), hours, website));
 
 		} catch (SQLException e) {
 			System.out.println("Invalid input. Try again.");
-//			addBusinessContact();
+			//			addBusinessContact();
 		}
 	}
 
@@ -381,17 +355,17 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 
 	public void displayContact() {
-		
+
 		int counter = 1;
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
 		System.out.println("***********************");
-//		for(BaseContact contact: bc) {
-//			System.out.println(counter++ + "|" + contact);
-//		}
-		
+		//		for(BaseContact contact: bc) {
+		//			System.out.println(counter++ + "|" + contact);
+		//		}
+
 		try {
-			
+
 			String sql = "SELECT last_name, name FROM contact ORDER BY last_name DESC";
 			Statement statement = connection.createStatement();
 			ResultSet results = statement.executeQuery(sql);
