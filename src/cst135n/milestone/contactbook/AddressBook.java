@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.List;
 import java.util.Scanner;
 
 public class AddressBook {
@@ -19,6 +19,7 @@ public class AddressBook {
 	SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	public ArrayList<BaseContact> bc = new ArrayList<>();
+	
 
 	Scanner sc = new Scanner(System.in);
 
@@ -195,20 +196,22 @@ public class AddressBook {
 		int userId = 4;
 		// will allow user to add addtional photos
 		boolean addAnother = true;
+		
 		try {
-
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
 			PreparedStatement stmt = connection.prepareStatement(sql);
 
-			// if (sc.nextLine().toUpperCase().equals(b)) {
+			//			if (sc.nextLine().toUpperCase().equals(b)) {
+			System.out.println("Contact Type : ");
+
 			String type = "B";
 			System.out.println("Contact Name : ");
 			String name = sc.nextLine();
-			System.out.println("Contact Number : ");
-			long phone_num = Integer.parseInt(sc.nextLine());
 			System.out.println("Contact Phone Type : ");
 			String phone_type = sc.nextLine();
+			System.out.println("Contact Phone Number : ");
+			long phone_num = Long.parseLong(sc.nextLine());
 			System.out.println("Contact Email : ");
 			String email = sc.nextLine();
 			System.out.println("Contact Hours : ");
@@ -217,21 +220,27 @@ public class AddressBook {
 			String website = sc.nextLine();
 			System.out.println("Contact Description : ");
 			String description = sc.nextLine();
-			System.out.println("photo id : ");
+			System.out.println("Contact Photo Id : ");
 			int photo_id = Integer.parseInt(sc.nextLine());
-//
+			System.out.println("Contact User id : ");
+			int user_id = Integer.parseInt(sc.nextLine());
+			
+			
+				
+				stmt.setString(1, type);		
+				stmt.setString(2, name);
+				stmt.setString(3, phone_type);
+				stmt.setLong(4, phone_num);
+				stmt.setString(5, email);
+				stmt.setString(6, hours);
+				stmt.setString(7, website);
+				stmt.setString(8, description);
+				stmt.setInt(9, photo_id);
+				stmt.setInt(10, user_id);
+				
+				
+				stmt.execute();
 
-			stmt.setString(1, type);
-			stmt.setString(2, name);
-			stmt.setString(3, phone_type);
-			stmt.setLong(4, phone_num);
-			stmt.setString(5, email);
-			stmt.setString(6, hours);
-			stmt.setString(7, website);
-			stmt.setString(8, description);
-			stmt.setInt(9, photo_id);
-			stmt.setInt(10, userId);
-			stmt.execute();
 
 //			do {
 //				System.out.println("+++++++++++++++++++");
@@ -264,12 +273,11 @@ public class AddressBook {
 //			String city = sc.nextLine();
 //			System.out.println("Contact State : ");
 //			String state = sc.nextLine();
-
-//			bc.add(new BusinessContact(phone_num, name, phone_type, photo,
+//
+//			bc.add(new BusinessContact(number, name, phone, photo,
 //					new Location(street, city, state), hours, website));
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 			System.out.println("Invalid input. Try again.");
 //			addBusinessContact();
 		}
@@ -318,6 +326,8 @@ public class AddressBook {
 		}
 	}
 
+
+
 	public void displayContact() {
 
 		int counter = 1;
@@ -340,7 +350,9 @@ public class AddressBook {
 				String first = results.getString("name");
 				System.out.println(last + ", " + first);
 			}
+
 		} catch (SQLException e) {
+
 			e.printStackTrace();
 		}
 	}
