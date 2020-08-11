@@ -27,7 +27,7 @@ public class ConsoleApp  {
 
 	static AddressBook ab = new AddressBook();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 
 		
 		ConsoleApp c = new ConsoleApp();
