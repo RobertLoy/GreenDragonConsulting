@@ -17,14 +17,14 @@ public class AddressBook {
 	Scanner sc = new Scanner(System.in);
 
 	public ArrayList<BaseContact> bc = new ArrayList<>();
-	
+
 	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
 	static final String USER = "root";
 	static final String PASS = "1mP0$$1bl3";
 
 	static Connection connection;
 
-	AddressBook(){
+	AddressBook() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -49,7 +49,9 @@ public class AddressBook {
 			System.out.println("4] SEARCH CONTACT");
 			System.out.println("5] DISPLAY CONTACT");
 			System.out.println("6] SORT CONTACT");
-			System.out.println("7] EDIT CONTACT");
+			System.out.println("7] LIST BUSINESS CONTACT");
+			System.out.println("8] UPDATE USER PASSWORD CONTACT");
+			System.out.println("9] EDIT CONTACT");
 			System.out.println("0] EXIT");
 
 			System.out.println("Select your option");
@@ -75,6 +77,12 @@ public class AddressBook {
 			case 7:
 				editContact();
 				break;
+			case 8:
+				listBusiness();
+				break;
+			case 9:
+				updateUserPw();
+				break;
 			default:
 				System.out.println("EXITING MENU");
 				break menu;
@@ -90,7 +98,7 @@ public class AddressBook {
 
 		// will count and numbe photos
 		int countPhotoID = 0;
-		
+
 		// will allow user to add addtional photos
 		boolean addAnother = true;
 
@@ -98,8 +106,8 @@ public class AddressBook {
 		System.out.println("*** ADD PERSONAL CONTACT ***");
 		System.out.println("****************************");
 		try {
-			//			System.out.println("Select: " + p + " Personal or " + b + " Business");
-			//			if (sc.nextLine().toUpperCase().equals(p)) {
+			// System.out.println("Select: " + p + " Personal or " + b + " Business");
+			// if (sc.nextLine().toUpperCase().equals(p)) {
 			System.out.println("Contact Name : ");
 			String name = sc.nextLine();
 			System.out.println("Contact Number : ");
@@ -141,7 +149,7 @@ public class AddressBook {
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
 			System.out.println("++++++++++++++++++++++");
-			
+
 			System.out.println("Contact Street : ");
 			String street = sc.nextLine();
 			System.out.println("Contact City : ");
@@ -149,8 +157,8 @@ public class AddressBook {
 			System.out.println("Contact State : ");
 			String state = sc.nextLine();
 
-			bc.add(new PersonContact(number, name, phone, photo,
-					new Location(street, city, state), dob, description, list, relative));
+			bc.add(new PersonContact(number, name, phone, photo, new Location(street, city, state), dob, description,
+					list, relative));
 
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
@@ -161,23 +169,23 @@ public class AddressBook {
 
 	public void setBc(PersonContact p) {
 		bc.add(p);
-		
+
 	}
 
 	private void addBusinessContact() {
 		ArrayList<Photo> photo = new ArrayList();
 		// will count and numbe photos
 		int countPhotoID = 0;
-		
+
 		// will allow user to add addtional photos
 		boolean addAnother = true;
-		
+
 		try {
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			
+
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			
-			//			if (sc.nextLine().toUpperCase().equals(b)) {
+
+			// if (sc.nextLine().toUpperCase().equals(b)) {
 			System.out.println("Contact Type : ");
 			String type = "B";
 			System.out.println("Contact Name : ");
@@ -198,24 +206,19 @@ public class AddressBook {
 			int photo_id = Integer.parseInt(sc.nextLine());
 			System.out.println("Contact User id : ");
 			int user_id = Integer.parseInt(sc.nextLine());
-			
-			
-				
-				stmt.setString(1, type);		
-				stmt.setString(2, name);
-				stmt.setString(3, phone_type);
-				stmt.setLong(4, phone_num);
-				stmt.setString(5, email);
-				stmt.setString(6, hours);
-				stmt.setString(7, website);
-				stmt.setString(8, description);
-				stmt.setInt(9, photo_id);
-				stmt.setInt(10, user_id);
-				
-				
-				stmt.execute();
 
-		
+			stmt.setString(1, type);
+			stmt.setString(2, name);
+			stmt.setString(3, phone_type);
+			stmt.setLong(4, phone_num);
+			stmt.setString(5, email);
+			stmt.setString(6, hours);
+			stmt.setString(7, website);
+			stmt.setString(8, description);
+			stmt.setInt(9, photo_id);
+			stmt.setInt(10, user_id);
+
+			stmt.execute();
 
 //			do {
 //				System.out.println("+++++++++++++++++++");
@@ -261,29 +264,26 @@ public class AddressBook {
 	public void removeContact() {
 		boolean removeAnother = true;
 		try {
-		do {
-			displayContact();
-			System.out.println("**********************");
-			System.out.println("*** REMOVE CONTACT ***");
-			System.out.println("**********************");
-			System.out.println("Which contact to remove : ");
+			do {
+				displayContact();
+				System.out.println("**********************");
+				System.out.println("*** REMOVE CONTACT ***");
+				System.out.println("**********************");
+				System.out.println("Which contact to remove : ");
 
-			int contactid = Integer.parseInt(sc.nextLine()) - 1;
-			System.out.println(bc.get(contactid) + "\n");
-			bc.remove(contactid);
-			
-			
-			
-			
-			System.out.println("Remove another contact? (Y/N)");
-			String ans = sc.nextLine().toUpperCase();
-			if (ans.equals("N")) {
-				removeAnother = false;
-			} else {
-				removeAnother = true;
-			}
+				int contactid = Integer.parseInt(sc.nextLine()) - 1;
+				System.out.println(bc.get(contactid) + "\n");
+				bc.remove(contactid);
 
-		} while (removeAnother == true);
+				System.out.println("Remove another contact? (Y/N)");
+				String ans = sc.nextLine().toUpperCase();
+				if (ans.equals("N")) {
+					removeAnother = false;
+				} else {
+					removeAnother = true;
+				}
+
+			} while (removeAnother == true);
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			removeContact();
@@ -305,7 +305,7 @@ public class AddressBook {
 	}
 
 	public void displayContact() {
-		
+
 		int counter = 1;
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
@@ -314,9 +314,9 @@ public class AddressBook {
 //		for(BaseContact contact: bc) {
 //			System.out.println(counter++ + "|" + contact);
 //		}
-		
+
 		try {
-			
+
 			String sql = "SELECT last_name, name FROM contact ORDER BY last_name DESC";
 
 			Statement statement = connection.createStatement();
@@ -350,8 +350,8 @@ public class AddressBook {
 			System.out.println("Select your option");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
-				
-				Collections.sort(bc, (b1, b2)-> b1.getName().compareTo(b2.getName()));
+
+				Collections.sort(bc, (b1, b2) -> b1.getName().compareTo(b2.getName()));
 				for (BaseContact contact : bc) {
 					System.out.println(contact);
 				}
@@ -364,7 +364,8 @@ public class AddressBook {
 			case 3:
 				System.out.println("Sort by Location group");
 				System.out.println(bc);
-				//				Collections.sort(bc, (b1, b2) -> b1.getLocation().compareTo(b2.getLocation()));
+				// Collections.sort(bc, (b1, b2) ->
+				// b1.getLocation().compareTo(b2.getLocation()));
 				break;
 			case 4:
 				System.out.println("Sort by ????? group");
@@ -408,13 +409,11 @@ public class AddressBook {
 			System.out.println("Contact Birthday : ");
 			System.out.println("Format : YYYY-MM-DD ");
 			String date = sc.nextLine();
-			bc.setDob(LocalDate.parse(date)); 
+			bc.setDob(LocalDate.parse(date));
 			System.out.println("Contact List : ");
 			bc.setList(sc.nextLine());
 			System.out.println("Contact Relative : ");
 			bc.setRelative(sc.nextLine());
-
-
 
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
@@ -436,7 +435,6 @@ public class AddressBook {
 
 	private void editBusinessContact(BusinessContact bc) {
 		System.out.println("Editting Business Contact: ");
-		
 
 		try {
 
@@ -450,7 +448,6 @@ public class AddressBook {
 			bc.setHours(sc.nextLine());
 			System.out.println("Contact Website : ");
 			bc.setWebsite(sc.nextLine());
-			
 
 			System.out.println("++++++++++++++++++++++");
 			System.out.println("+++Contact Location+++");
@@ -468,7 +465,101 @@ public class AddressBook {
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
 		}
-	
+
+	}
+
+	public void listBusiness() {
+
+		int counter = 1;
+		System.out.println("*********************");
+		System.out.println("*** List Business ***");
+		System.out.println("*********************");
+
+//		for(BaseContact contact: bc) {
+//			System.out.println(counter++ + "|" + contact);
+//		}
+
+		try {
+
+			String sql = "SELECT contact_id, name FROM contact WHERE type = 'B'";
+
+			Statement statement = connection.createStatement();
+			ResultSet results = statement.executeQuery(sql);
+			System.out.println("Business");
+			System.out.println("==========");
+			while (results.next()) {
+
+				int id = results.getInt("contact_id");
+				String first = results.getString("name");
+				System.out.println(id + "]" + first);
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	public void updateUserPw() {
+
+		int counter = 1;
+		System.out.println("****************************");
+		System.out.println("*** Update User Password ***");
+		System.out.println("****************************");
+
+//	for(BaseContact contact: bc) {
+//		System.out.println(counter++ + "|" + contact);
+//	}
+
+		try {
+
+			String sql = "SELECT user_id, user_name FROM user WHERE business_role = 'user'";
+
+			Statement statement = connection.createStatement();
+			ResultSet results = statement.executeQuery(sql);
+			System.out.println("User Info");
+			System.out.println("==========");
+			while (results.next()) {
+
+				int id = results.getInt("user_id");
+				String user = results.getString("user_name");
+
+				System.out.println(id + "]" + user);
+
+			}
+			
+
+			System.out.println("Which User's Password to Update?");
+			int opt = sc.nextInt();
+			sc.nextLine();
+
+			
+			sql = "SELECT password FROM user WHERE user_id = ?";
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, opt);
+			results = stmt.executeQuery();
+			while (results.next()) {
+
+				// Allow the user to make changes
+				System.out.println("Password [" + results.getString("password") + "]: ");
+				String password = sc.nextLine();
+				sc.nextLine();
+				
+
+				// Update the table
+				sql = "UPDATE user SET password = ? WHERE user_id = ?";
+				stmt = connection.prepareStatement(sql);
+				stmt.setString(1, password);
+				stmt.setInt(2, opt);
+				stmt.execute();
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 
 }
