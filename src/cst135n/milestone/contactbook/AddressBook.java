@@ -336,34 +336,34 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		}
 	}
 
-	public void removeContact() {
+		public void removeContact() {
 		boolean removeAnother = true;
 		try {
-			do {
-				displayContact();
-				System.out.println("**********************");
-				System.out.println("*** REMOVE CONTACT ***");
-				System.out.println("**********************");
-				System.out.println("Which contact to remove : ");
+			String sql = "SELECT contact_id, type, name, last_name, phone_type, phone_num FROM contact";
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			ResultSet results = stmt.executeQuery();
+			while (results.next()) {
+				System.out.print(results.getInt("contact_id") + "] ");
+				System.out.print("\t" + results.getString("type") + "] ");
+				System.out.print("\t" + results.getString("name") + "] ");
+				System.out.print("\t" + results.getString("last_name") + "] ");
+				System.out.print("\t" + results.getString("phone_type") + "] ");
+				System.out.print("\t" + results.getLong("phone_num") + "\n");
 
-				int contactid = Integer.parseInt(sc.nextLine()) - 1;
-				System.out.println(bc.get(contactid) + "\n");
-				bc.remove(contactid);
-
-				System.out.println("Remove another contact? (Y/N)");
-				String ans = sc.nextLine().toUpperCase();
-				if (ans.equals("N")) {
-					removeAnother = false;
-				} else {
-					removeAnother = true;
-				}
-
-			} while (removeAnother == true);
-		} catch (Exception e) {
-			System.out.println("Invalid input. Try again.");
+			}
+			System.out.println("Which CONTACT item to delete [THERE IS NO UNDO]?");
+			int id = sc.nextInt();
+			// DELETE a record from the table
+			sql = "DELETE FROM CONTACT WHERE contact_id = ?";
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.print("Oops, try again!");
 			removeContact();
 		}
-	}
+		}
 
 	public void searchContact() {
 		System.out.println("**********************");
