@@ -312,18 +312,22 @@ public class AddressBook {
 		}
 	}
 
-	public void searchContact() {
+	public void searchContact() throws SQLException {
 		System.out.println("**********************");
 		System.out.println("*** SEARCH CONTACT ***");
 		System.out.println("**********************");
-		System.out.println("Which contact to search : ");
+		System.out.println("Search by contact number:  ");
 
-		String name = sc.nextLine();
-		for (BaseContact c : bc) {
-			if (c.getName().equals(name)) {
-				System.out.println(c);
-			}
-		}
+		int contact_id = Integer.parseInt(sc.nextLine());
+		
+		String sql = "SELECT * FROM contact WHERE contact_id = ?";
+		PreparedStatement stmt = connection.prepareStatement(sql);
+		
+		stmt.setInt(1, contact_id);
+		ResultSet results = stmt.executeQuery();
+		
+		System.out.println(results);
+		
 	}
 
 
