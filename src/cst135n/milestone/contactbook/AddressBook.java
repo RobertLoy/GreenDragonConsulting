@@ -15,20 +15,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class AddressBook {
-String pattern = "yyyy-MM-dd";
-SimpleDateFormat format = new SimpleDateFormat(pattern);
-	
-	public ArrayList<BaseContact> bc = new ArrayList<>();
-	
-	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
-	static final String USER = "root";
-	static final String PASS = "1mP0$$1bl3";
+import java.io.*;
+import java.sql.*;
 
+public class AddressBook {
+
+	// ROB - Adding Scanner
+	private Scanner sc = new Scanner(System.in);
+
+	String pattern = "yyyy-MM-dd";
+	SimpleDateFormat format = new SimpleDateFormat(pattern);
+
+	public ArrayList<BaseContact> bc = new ArrayList<>();
+
+	static final String DB_URL = "jdbc:mysql://127.0.0.1/greendragon";
+	static final String USER = "DB_access";
+	static final String PASS = "db_p@$$word";
 
 	static Connection connection;
 
-	AddressBook(){
+	AddressBook() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -44,6 +50,9 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	public void displayUserMenu() {
 
+		// ROB - Added the DO Loop
+
+		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
 			System.out.println("*******************");
@@ -84,8 +93,9 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		} while (true);
 
 	}
-	
+
 	public void displayAdminMenu() {
+
 		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
@@ -97,26 +107,34 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("4] VIEW BUSINESS CONTACTS FOR ALL USERS");
 			System.out.println("5] UPDATE USER'S PASSWORD");
 			System.out.println("6] DELETE A SHOW");
+			System.out.println("7] EXPORT USER EMAILS TO TEXT FILE");
+			System.out.println("8] EXPORT USER WEBSITES TO TEXT FILE");
 
 			System.out.println("Select your option...");
 			switch (Integer.parseInt(sc.nextLine())) {
 			case 1:
-				
+
 				break;
 			case 2:
-				
+
 				break;
 			case 3:
-				
+
 				break;
 			case 4:
-				
+
 				break;
 			case 5:
-				
+
 				break;
 			case 6:
-				
+
+				break;
+			case 7:
+				writeEmail();
+				break;
+			case 8:
+				writeBusUrl();
 				break;
 			default:
 				System.out.println("EXITING MENU");
@@ -127,9 +145,9 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		} while (true);
 
 	}
+
 	private void addPersonContact() {
-		
-		
+
 		ArrayList<Photo> photo = new ArrayList();
 
 		// will count and numbe photos
@@ -144,13 +162,13 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		System.out.println("*** ADD PERSONAL CONTACT ***");
 		System.out.println("****************************");
 		try {
-			
+
 			String sql = "INSERT INTO contact (type, name, last_name, phone_type, phone_num, email, dob, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
-			
+
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			
-			//			System.out.println("Select: " + p + " Personal or " + b + " Business");
-			//			if (sc.nextLine().toUpperCase().equals(p)) {
+
+			// System.out.println("Select: " + p + " Personal or " + b + " Business");
+			// if (sc.nextLine().toUpperCase().equals(p)) {
 			String type = "p";
 			System.out.println("Contact First Name : ");
 			String name = sc.nextLine();
@@ -201,24 +219,22 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Contact State : ");
 			String state = sc.nextLine();
 
-			bc.add(new PersonContact(phone_num, name, phone_type, photo,
-					new Location(street, city, state), dob, description));
+			bc.add(new PersonContact(phone_num, name, phone_type, photo, new Location(street, city, state), dob,
+					description));
 
-			
 			stmt = connection.prepareStatement(sql);
-			stmt.setString(1,type);
-			stmt.setString(2,name);		
-			stmt.setString(3,last_name);
-			stmt.setString(4,phone_type);
-			stmt.setLong(5,phone_num);
-			stmt.setString(6,email);
+			stmt.setString(1, type);
+			stmt.setString(2, name);
+			stmt.setString(3, last_name);
+			stmt.setString(4, phone_type);
+			stmt.setLong(5, phone_num);
+			stmt.setString(6, email);
 			stmt.setDate(7, dob);
-			stmt.setString(8,description);
-			stmt.setInt(9,countPhotoID);
-			stmt.setInt(10,userId);
+			stmt.setString(8, description);
+			stmt.setInt(9, countPhotoID);
+			stmt.setInt(10, userId);
 			stmt.execute();
 
-			
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
@@ -239,12 +255,12 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		int userId = 4;
 		// will allow user to add addtional photos
 		boolean addAnother = true;
-		
+
 		try {
 
 			String sql = "INSERT INTO contact (type, name, phone_type, phone_num, email, hours, website, description, photo_id, user_id) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement stmt = connection.prepareStatement(sql);
-			//			if (sc.nextLine().toUpperCase().equals(b)) {
+			// if (sc.nextLine().toUpperCase().equals(b)) {
 			System.out.println("Contact Type : ");
 			String type = "B";
 			System.out.println("Contact Name : ");
@@ -292,78 +308,44 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Contact State : ");
 			String state = sc.nextLine();
 
-			bc.add(new BusinessContact(number, name, phone, photo, new Location(street, city, state), hours, website));
-
-
-//			do {
-//				System.out.println("+++++++++++++++++++");
-//				System.out.println("+++Contact Photo+++");
-//				System.out.println("+++++++++++++++++++");
-//				System.out.println("Contact Photo ID : " + ++countPhotoID);
-//				System.out.println("Format : YYYY-MM-DD ");
-//				String date2 = sc.nextLine();
-//				LocalDate dop = LocalDate.parse(date2);
-//				System.out.println("Contact Photo Description : ");
-//				String notes = sc.nextLine();
-//				photo.add(new Photo(countPhotoID, dop, notes));
-//				System.out.println("Add another photo? (Y/N)");
-//				String ans = sc.nextLine().toUpperCase();
-//				if (ans.equals("N")) {
-//					addAnother = false;
-//				} else {
-//					addAnother = true;
-//				}
-//
-//			} while (addAnother == true);
-//
-//			System.out.println("++++++++++++++++++++++");
-//			System.out.println("+++Contact Location+++");
-//			System.out.println("++++++++++++++++++++++");
-//			
-//			System.out.println("Contact Street : ");
-//			String street = sc.nextLine();
-//			System.out.println("Contact City : ");
-//			String city = sc.nextLine();
-//			System.out.println("Contact State : ");
-//			String state = sc.nextLine();
-//
-//			bc.add(new BusinessContact(number, name, phone, photo,
-//					new Location(street, city, state), hours, website));
+			// ROB - Updated names to match inputs
+			bc.add(new BusinessContact(phone_num, name, phone_type, photo, new Location(street, city, state), hours,
+					website));
 
 		} catch (SQLException e) {
 			System.out.println("Invalid input. Try again.");
-//			addBusinessContact();
+			// addBusinessContact();
 		}
 	}
 
-		public void removeContact() {
+	public void removeContact() {
 		boolean removeAnother = true;
 		try {
-			String sql = "SELECT contact_id, type, name, last_name, phone_type, phone_num FROM contact";
-			PreparedStatement stmt = connection.prepareStatement(sql);
-			ResultSet results = stmt.executeQuery();
-			while (results.next()) {
-				System.out.print(results.getInt("contact_id") + "] ");
-				System.out.print("\t" + results.getString("type") + "] ");
-				System.out.print("\t" + results.getString("name") + "] ");
-				System.out.print("\t" + results.getString("last_name") + "] ");
-				System.out.print("\t" + results.getString("phone_type") + "] ");
-				System.out.print("\t" + results.getLong("phone_num") + "\n");
+			do {
+				displayContact();
+				System.out.println("**********************");
+				System.out.println("*** REMOVE CONTACT ***");
+				System.out.println("**********************");
+				System.out.println("Which contact to remove : ");
 
-			}
-			System.out.println("Which CONTACT item to delete [THERE IS NO UNDO]?");
-			int id = sc.nextInt();
-			// DELETE a record from the table
-			sql = "DELETE FROM CONTACT WHERE contact_id = ?";
-			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, id);
-			stmt.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.print("Oops, try again!");
+				int contactid = Integer.parseInt(sc.nextLine()) - 1;
+				System.out.println(bc.get(contactid) + "\n");
+				bc.remove(contactid);
+
+				System.out.println("Remove another contact? (Y/N)");
+				String ans = sc.nextLine().toUpperCase();
+				if (ans.equals("N")) {
+					removeAnother = false;
+				} else {
+					removeAnother = true;
+				}
+
+			} while (removeAnother == true);
+		} catch (Exception e) {
+			System.out.println("Invalid input. Try again.");
 			removeContact();
 		}
-		}
+	}
 
 	public void searchContact() {
 		System.out.println("**********************");
@@ -379,19 +361,18 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 		}
 	}
 
-
 	public void displayContact() {
-		
+
 		int counter = 1;
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
 		System.out.println("***********************");
-//		for(BaseContact contact: bc) {
-//			System.out.println(counter++ + "|" + contact);
-//		}
-		
+		// for(BaseContact contact: bc) {
+		// System.out.println(counter++ + "|" + contact);
+		// }
+
 		try {
-			
+
 			String sql = "SELECT last_name, name FROM contact ORDER BY last_name DESC";
 			Statement statement = connection.createStatement();
 			ResultSet results = statement.executeQuery(sql);
@@ -403,12 +384,12 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 				System.out.println(last + ", " + first);
 			}
 
-
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
 	}
+
 	public void sortContact() {
 		sort: do {
 			System.out.println("****************");
@@ -483,7 +464,7 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 			System.out.println("Format : YYYY-MM-DD ");
 			String date = sc.nextLine();
 
-			bc.setDob(new Date(format.parse(date).getTime())); 
+			bc.setDob(new Date(format.parse(date).getTime()));
 
 			System.out.println("Contact List : ");
 			bc.setList(sc.nextLine());
@@ -543,4 +524,78 @@ SimpleDateFormat format = new SimpleDateFormat(pattern);
 
 	}
 
+	public void writeEmail() {
+		String path = "contact.txt";
+
+		try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+			String sql = "SELECT name, last_name, email FROM contact";
+
+			Statement statement = connection.createStatement();
+
+			ResultSet result = statement.executeQuery(sql);
+
+			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(path));
+
+			// write header line containing column names
+			fileWriter.write("NAME, LAST NAME, EMAIL:");
+
+			while (result.next()) {
+				String name = result.getString("name");
+				String last_name = result.getString("last_name");
+				String email = result.getString("email");
+
+				String line = String.format("\"%s\",%s,%s", name,  last_name, email);
+
+				fileWriter.newLine();
+				fileWriter.write(line);
+			}
+
+			statement.close();
+			fileWriter.close();
+
+		} catch (SQLException e) {
+			System.out.println("Datababse error:");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("File IO error:");
+			e.printStackTrace();
+		}
+
+	}
+
+	public void writeBusUrl() {
+		String path = "contact.txt";
+
+		try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
+			String sql = "SELECT name, last_name, website FROM contact";
+			Statement statement = connection.createStatement();
+
+			ResultSet result = statement.executeQuery(sql);
+
+			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(path));
+
+			fileWriter.write("NAME, LAST NAME, WEBSITE:");
+
+			while (result.next()) {
+				String name = result.getString("name");
+				String last_name = result.getString("last_name");
+				String website = result.getString("website");
+
+				String line = String.format("\"%s\",%s,%s", name, last_name, website);
+				fileWriter.newLine();
+				fileWriter.write(line);
+			}
+
+			statement.close();
+			fileWriter.close();
+
+		} catch (SQLException e) {
+			System.out.println("Datababse error:");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("File IO error:");
+			e.printStackTrace();
+		}
+
+	}
 }
