@@ -52,6 +52,7 @@ public class AddressBook {
 			System.out.println("7] LIST BUSINESS CONTACT");
 			System.out.println("8] UPDATE USER PASSWORD CONTACT");
 			System.out.println("9] EDIT CONTACT");
+			System.out.println("10} REPORT");
 			System.out.println("0] EXIT");
 
 			System.out.println("Select your option");
@@ -82,6 +83,9 @@ public class AddressBook {
 				break;
 			case 9:
 				updateUserPw();
+				break;
+			case 10:
+				report();
 				break;
 			default:
 				System.out.println("EXITING MENU");
@@ -561,5 +565,36 @@ public class AddressBook {
 		}
 
 	}
+	
+	public void report () {
+	System.out.println("**************");
+	System.out.println("*** REPORT ***");
+	System.out.println("**************");
+
+//	for(BaseContact contact: bc) {
+//		System.out.println(counter++ + "|" + contact);
+//	}
+
+	try {
+
+		String sql = "SELECT user_id, user_name, business_role FROM user ORDER BY user_id DESC";
+
+		Statement statement = connection.createStatement();
+		ResultSet results = statement.executeQuery(sql);
+		System.out.println("Report");
+		System.out.println("==========");
+		while (results.next()) {
+			int id = results.getInt("user_id");
+			String first = results.getString("user_name");
+			String role = results.getString("business_role");
+			System.out.println(id + "] " + first + ", " + role);
+		}
+
+	} catch (SQLException e) {
+
+		e.printStackTrace();
+	}
+
+}
 
 }
