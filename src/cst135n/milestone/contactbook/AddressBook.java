@@ -321,28 +321,27 @@ public class AddressBook {
 	public void removeContact() {
 		boolean removeAnother = true;
 		try {
-			do {
-				displayContact();
-				System.out.println("**********************");
-				System.out.println("*** REMOVE CONTACT ***");
-				System.out.println("**********************");
-				System.out.println("Which contact to remove : ");
-
-				int contactid = Integer.parseInt(sc.nextLine()) - 1;
-				System.out.println(bc.get(contactid) + "\n");
-				bc.remove(contactid);
-
-				System.out.println("Remove another contact? (Y/N)");
-				String ans = sc.nextLine().toUpperCase();
-				if (ans.equals("N")) {
-					removeAnother = false;
-				} else {
-					removeAnother = true;
-				}
-
-			} while (removeAnother == true);
-		} catch (Exception e) {
-			System.out.println("Invalid input. Try again.");
+			String sql = "SELECT contact_id, type, name, last_name, phone_type, phone_num FROM contact";
+			PreparedStatement stmt = connection.prepareStatement(sql);
+			ResultSet results = stmt.executeQuery();
+			while (results.next()) {
+				System.out.print(results.getInt("contact_id") + "] ");
+				System.out.print("\t" + results.getString("type") + "] ");
+				System.out.print("\t" + results.getString("name") + "] ");
+				System.out.print("\t" + results.getString("last_name") + "] ");
+				System.out.print("\t" + results.getString("phone_type") + "] ");
+				System.out.print("\t" + results.getLong("phone_num") + "\n");
+			}
+			System.out.println("Which CONTACT item to delete [THERE IS NO UNDO]?");
+			int id = sc.nextInt();
+			// DELETE a record from the table
+			sql = "DELETE FROM CONTACT WHERE contact_id = ?";
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, id);
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.print("Oops, try again!");
 			removeContact();
 		}
 	}
@@ -544,7 +543,7 @@ public class AddressBook {
 				String last_name = result.getString("last_name");
 				String email = result.getString("email");
 
-				String line = String.format("\"%s\",%s,%s", name,  last_name, email);
+				String line = String.format("\"%s\",%s,%s", name, last_name, email);
 
 				fileWriter.newLine();
 				fileWriter.write(line);
@@ -568,12 +567,14 @@ public class AddressBook {
 
 		try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS)) {
 			String sql = "SELECT name, last_name, website FROM contact";
+//			String sql = "SELECT website FROM contact";
 			Statement statement = connection.createStatement();
 
 			ResultSet result = statement.executeQuery(sql);
 
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(path));
 
+			// write header line containing column names
 			fileWriter.write("NAME, LAST NAME, WEBSITE:");
 
 			while (result.next()) {
@@ -582,6 +583,7 @@ public class AddressBook {
 				String website = result.getString("website");
 
 				String line = String.format("\"%s\",%s,%s", name, last_name, website);
+//				String line = String.format( website);
 				fileWriter.newLine();
 				fileWriter.write(line);
 			}
