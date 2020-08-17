@@ -2,7 +2,8 @@ package cst135n.milestone.contactbook;
 
 public class Location {
 	
-	
+	// Test
+
 	private String street;
 	private String city;
 	private String state;
