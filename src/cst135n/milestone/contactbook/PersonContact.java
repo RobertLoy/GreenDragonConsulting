@@ -1,12 +1,11 @@
 package cst135n.milestone.contactbook;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 //Child of BaseContact
 public class PersonContact extends BaseContact {
-
+	// TEST
 	private Date dob;
 	private String description;
 	private String list;
