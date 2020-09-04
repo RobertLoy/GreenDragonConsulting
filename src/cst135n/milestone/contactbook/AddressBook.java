@@ -1,12 +1,10 @@
 package cst135n.milestone.contactbook;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-
 import java.io.*;
 import java.sql.*;
 
@@ -32,6 +29,7 @@ public class AddressBook {
 	static final String USER = "DB_access";
 	static final String PASS = "db_p@$$word";
 
+	
 	static Connection connection;
 
 	AddressBook() {
@@ -48,10 +46,11 @@ public class AddressBook {
 		}
 	}
 
+
 	public void displayUserMenu() {
-
+		
 		// ROB - Added the DO Loop
-
+		
 		menu: do {
 			System.out.println("*******************");
 			System.out.println("** CONTACT MENU ***");
