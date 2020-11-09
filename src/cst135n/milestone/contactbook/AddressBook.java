@@ -17,7 +17,6 @@ import java.sql.*;
 
 public class AddressBook {
 
-	// ROB - Adding Scanner
 	private Scanner sc = new Scanner(System.in);
 
 	String pattern = "yyyy-MM-dd";
@@ -45,7 +44,6 @@ public class AddressBook {
 			e.printStackTrace();
 		}
 	}
-
 
 	public void displayUserMenu() {
 		
@@ -127,7 +125,6 @@ public class AddressBook {
 
 				break;
 			case 6:
-
 				break;
 			case 7:
 				writeEmail();
@@ -166,8 +163,6 @@ public class AddressBook {
 
 			PreparedStatement stmt = connection.prepareStatement(sql);
 
-			// System.out.println("Select: " + p + " Personal or " + b + " Business");
-			// if (sc.nextLine().toUpperCase().equals(p)) {
 			String type = "p";
 			System.out.println("Contact First Name : ");
 			String name = sc.nextLine();
@@ -220,7 +215,7 @@ public class AddressBook {
 
 			bc.add(new PersonContact(phone_num, name, phone_type, photo, new Location(street, city, state), dob,
 					description));
-
+      
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, type);
 			stmt.setString(2, name);
@@ -233,7 +228,6 @@ public class AddressBook {
 			stmt.setInt(9, countPhotoID);
 			stmt.setInt(10, userId);
 			stmt.execute();
-
 		} catch (Exception e) {
 			System.out.println("Invalid input. Try again.");
 			addPersonContact();
@@ -308,12 +302,11 @@ public class AddressBook {
 			String state = sc.nextLine();
 
 			// ROB - Updated names to match inputs
-			bc.add(new BusinessContact(phone_num, name, phone_type, photo, new Location(street, city, state), hours,
-					website));
+			bc.add(new BusinessContact(phone_num, name, phone_type, photo, new Location(street, city, state), hours, website));
 
 		} catch (SQLException e) {
 			System.out.println("Invalid input. Try again.");
-			// addBusinessContact();
+
 		}
 	}
 
@@ -365,9 +358,6 @@ public class AddressBook {
 		System.out.println("***********************");
 		System.out.println("*** DISPLAY CONTACT ***");
 		System.out.println("***********************");
-		// for(BaseContact contact: bc) {
-		// System.out.println(counter++ + "|" + contact);
-		// }
 
 		try {
 
